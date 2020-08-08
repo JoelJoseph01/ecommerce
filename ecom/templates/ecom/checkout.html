@@ -119,12 +119,11 @@
 				shippingInfo.country = form.country.value
 
 			}
-			if(user!='AnonymousUser'){
 				userFormData.name = form.name.value
 	    		userFormData.email = form.email.value
 				userFormData.number = form.number.value
 
-			}
+			console.log('Name:',userFormData.name)
 			console.log('Shipping Info:', shippingInfo)
 	    	console.log('User Info:', userFormData)
 			var url = "/process_order/"

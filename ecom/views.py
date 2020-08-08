@@ -14,15 +14,16 @@ def home(request):
 def store(request):
     if request.user.is_authenticated:
         try:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, complete=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
+            customer=request.user.customer
+            
         except Exception:
-            customer = Customer.objects.create(user=request.user)
-            order, created = Order.objects.get_or_create(customer=customer, complete=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
+            customer, created = Customer.objects.get_or_create(user=request.user)
+        
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    
+    
     else:
         items = []
         order = {'get_cart_total':0, 'get_cart_items':0,'shipping':False}
@@ -62,10 +63,11 @@ def empty(request):
 @login_required
 def checkout(request):
     if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, complete=False)
-            items = order.orderitem_set.all()
-            cartItems = order.get_cart_items
+        customer=request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    
     else:
         
             items = []
@@ -152,16 +154,24 @@ def processOrder(request):
         order.transaction_id = transaction_id
         if total == order.get_cart_total:
             order.complete = True
-        order.save()
+        if transaction_id!=None:
+            order.save()
 
         if order.shipping == True:
-            ShippingAddress.objects.create(
-                customer=customer,
-                order=order,
-                address=data['shipping']['address'],
-                city=data['shipping']['city'],
-                state=data['shipping']['state'],
-                zipcode=data['shipping']['zipcode'],
-                country=data['shipping']['country'],
-            )
+                ShippingAddress.objects.create(
+                    customer=customer,
+                    order=order,
+                    address=data['shipping']['address'],
+                    city=data['shipping']['city'],
+                    state=data['shipping']['state'],
+                    zipcode=data['shipping']['zipcode'],
+                    country=data['shipping']['country'],
+                )
+                Customer.objects.create(
+                    name=data['form']['name'],
+                    email=data['form']['email'],
+                    number=data['form']['number'],
+                    
+                    
+                )
         return JsonResponse('Payment Successful',safe=False)
