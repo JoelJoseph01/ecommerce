@@ -1,0 +1,38 @@
+{% extends 'ecom/main.html' %}
+{% block content %}   <br>
+<br>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
+<div class="login-form" style="margin-bottom: 15px;
+background:white;
+box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+width: 380px;height: 350px;
+padding: 30px;">
+<form method="POST">
+    <h2 class="text-center">Log in</h2>       
+    <br>
+    {% csrf_token %}
+      <div class="md-form">
+        <i class="fas fa-envelope prefix white-text active"></i>
+        <input type="text" id="username" class="white-text form-control"name="username" placeholder="Username">
+      </div>
+      <br>
+      <div class="md-form">
+        <i class="fas fa-lock prefix white-text active"></i>
+        <input type="password" id="password" class="white-text form-control" name="password" placeholder="Password">
+      </div>
+      <br>
+        <button type="submit" class="btn btn-primary" href="{% url 'store' %}">Login</button>
+</form>
+<hr>
+<div class="text-center">
+    Don't have an account? <a href="{% url 'signupuser' %}">Create an account</a>
+</div>
+</div>
+
+{% endblock %}
