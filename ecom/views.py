@@ -15,13 +15,14 @@ def store(request):
     if request.user.is_authenticated:
         try:
             customer=request.user.customer
-            
         except Exception:
-            customer, created = Customer.objects.get_or_create(user=request.user)
-        
+            customer,created=Customer.objects.update_or_create(user=request.user)
+            customer.save()
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
         cartItems = order.get_cart_items
+        
+        
     
     
     else:
@@ -154,8 +155,9 @@ def processOrder(request):
         order.transaction_id = transaction_id
         if total == order.get_cart_total:
             order.complete = True
-        if transaction_id!=None:
+        if order.complete == True:
             order.save()
+        
 
         if order.shipping == True:
                 ShippingAddress.objects.create(
@@ -174,4 +176,5 @@ def processOrder(request):
                     
                     
                 )
+                
         return JsonResponse('Payment Successful',safe=False)

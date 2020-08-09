@@ -9,7 +9,7 @@ class Customer(models.Model):
     number = models.CharField(max_length=20)
 
     def __str__(self):
-        return str(self.name)
+        return str(self.name) if self.name else str(self.user)
 
 
 class Product(models.Model):
@@ -19,12 +19,12 @@ class Product(models.Model):
     image = models.ImageField(upload_to='ecom/images/')
 
     def __str__(self):
-        return self.name
+        return self.name 
 
 
 class Order(models.Model):
     customer = models.ForeignKey(
-        Customer, on_delete=models.CASCADE, blank=True, null=True)
+        Customer, on_delete=models.SET_NULL, blank=True, null=True)
     order_date = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, null=True, blank=False)
     transaction_id = models.CharField(max_length=200, null=True)
@@ -56,7 +56,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField(default=0, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
