@@ -17,7 +17,6 @@ def store(request):
             customer=request.user.customer
         except Exception:
             customer,created=Customer.objects.update_or_create(user=request.user)
-            customer.save()
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
         cartItems = order.get_cart_items
@@ -39,13 +38,12 @@ def store(request):
 def cart(request):
 
         if request.user.is_authenticated:
-            try:
-                customer = request.user.customer
-            except Exception:
-                return redirect('empty')
+            customer = request.user.customer
             order, created = Order.objects.get_or_create(customer=customer, complete=False)
             items = order.orderitem_set.all()
             cartItems = order.get_cart_items
+            if cartItems == 0:
+                return redirect('empty')
 
 
                 
@@ -155,9 +153,7 @@ def processOrder(request):
         order.transaction_id = transaction_id
         if total == order.get_cart_total:
             order.complete = True
-        if order.complete == True:
-            order.save()
-        
+        order.save()
 
         if order.shipping == True:
                 ShippingAddress.objects.create(
